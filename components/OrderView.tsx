@@ -32,16 +32,22 @@ export function OrderTracker({ order }: { order: Order }) {
   const current = STAGES.reduce((acc, s, i) => (elapsed >= s.after ? i : acc), 0);
 
   return (
-    <ol className="grid gap-4 sm:grid-cols-5" aria-label="Order progress">
+    <ol className="grid gap-6 sm:grid-cols-5 sm:gap-0" aria-label="Order progress">
       {STAGES.map((s, i) => {
         const done = i <= current;
+        const last = i === STAGES.length - 1;
         return (
-          <li key={s.label} className="relative flex items-center gap-3 sm:flex-col sm:items-start sm:gap-2">
-            <span className={`z-10 grid h-9 w-9 shrink-0 place-items-center rounded-full border-2 transition ${done ? "border-accent bg-accent text-black" : "border-line text-muted"}`}>
+          <li key={s.label} className="relative flex items-center gap-4 sm:flex-col sm:gap-3 sm:text-center">
+            {!last && (
+              <span
+                aria-hidden
+                className={`absolute left-[18px] top-[18px] -z-0 h-[calc(100%+1.5rem)] w-0.5 -translate-x-1/2 sm:left-1/2 sm:h-0.5 sm:w-full sm:translate-x-0 ${i < current ? "bg-accent" : "bg-white/10"}`}
+              />
+            )}
+            <span className={`relative z-10 grid h-9 w-9 shrink-0 place-items-center rounded-full border-2 text-sm font-semibold transition ${done ? "border-accent bg-accent text-black" : "border-white/15 bg-surface text-muted"}`}>
               {done ? <CheckIcon width={16} height={16} /> : i + 1}
             </span>
-            {i < STAGES.length - 1 && <span className={`absolute left-[18px] top-9 h-[calc(100%+1rem)] w-0.5 sm:left-9 sm:top-[18px] sm:h-0.5 sm:w-[calc(100%-2.25rem)] ${i < current ? "bg-accent" : "bg-line"}`} />}
-            <span className={`text-sm ${done ? "font-semibold" : "text-muted"}`}>{s.label}</span>
+            <span className={`text-sm ${done ? "font-semibold text-ink" : "text-muted"}`}>{s.label}</span>
           </li>
         );
       })}
